@@ -1,0 +1,20 @@
+docker run hello-world
+# Ctrl-p and Ctrl-q
+docker ps -a
+docker inspect <ID>
+docker inpsect --format='{{.NetworkSettings.IPAddress}}' containername
+docker images
+docker image ls
+docker image rm
+docker history <imageID> 
+docker history image:tag
+docker tag myapache myapache:1.0
+
+git clone https://github.com/sandervanvugt/ckad
+
+# check which package provides a command. Using dnf package manager
+sudo dnf provides */ip | less 
+
+docker diff myapache
+docker commit myapache myapache
+docker save -o myapache.tar myapache
