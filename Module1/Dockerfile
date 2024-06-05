@@ -1,7 +1,6 @@
 FROM centos:7
 # MAINTAINER is deplricated
 #MAINTAINER Andriy andrew.grebeniuk@gmail.com
-MAINTAINER Andriy andrew.grebeniuk@gmail.com
 LABEL Author="Andriy andrew.grebeniuk@gmail.com"
 
 #Add repo file
