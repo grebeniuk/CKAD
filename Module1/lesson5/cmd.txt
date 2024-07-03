@@ -1,0 +1,13 @@
+kubectl run test --image=ngnix
+kubectl get pods -o yaml
+kubectl describe pod 
+kubectl explain Pod
+kubectl create/delete/apply/replace -f *.yaml
+
+kubectl get pods -n lab5
+kubectl describe pod static-web -n lab5
+
+
+kubectl create ns lab52 --dry-run=client -o yaml > pods_ns_2.yaml
+kubectl run pod --image=nginx --dry-run=client -n lab52 -o yaml >> pods_ns_2.yaml
+kubectl get pods -n lab52
