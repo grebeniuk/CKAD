@@ -1,0 +1,32 @@
+kubectl get pods nginxtest -o yaml | less
+kubectl explain pods.spec.dnsPolicy
+kubectl describe pod nginxtest
+kubectl exec -it nginxtest -- sh
+cd /proc
+ls
+# to get details about the cmd running in the process (master process in this case)
+cat 1/cmdline
+kubectl logs nginxtest
+kubectl port-forwarding nginxtest 8080:80
+
+# port forward
+kubectl port-forward nginxtest 8080:80 &
+curl localhost:8080
+fg
+
+#jobs
+kubectl create job onejob --image=busybox -- date
+kubectl get all
+kubectl get job onejob -o yaml
+# we need to remove manualy, because we did not specify ttlSecondsAfterFinished to clean up automatically
+kubectl delete jobs.batch onejob
+
+#cron
+kubectl create cronjob runme --image=busybox --schedule="*/2 * * * *" -- echo greetings from the cluster
+kubectl create job runnow --from=cronjob/runme
+kubectl get jobs
+kubectl logs runnow
+kubectl delete jobs.batch runnow
+kubectl delete cronjobs.batch runme
+
+kubectl run pod --image=busybox -n secret --dry-run=client -o yaml -- sleep 3600 > app.yaml
