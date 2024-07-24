@@ -1,0 +1,36 @@
+# Services are API reousces exposing a logical set of Pods
+# Service is not deleted with Pods
+# kube-proxy is a local agent which listens for traffic to Service port and redirects traffic to a Pod
+# Type of Servicres: ClusterIP, NodePort, LoadBalancer (only in public clouds), Externlal Name - DNS
+
+# create service
+k expose
+k create service
+
+# --port is required
+# types of ports: targetport (port on the continer), port (port for Service), nodeport (only for NodePort, to expose externally)
+
+NodePort (30000) -> Deployment (80)
+Server:80 -> Deployment:80 -> Pod:80 -> Container:80
+
+k create deploy nsvc --image=nginx
+k expose deploy nsvc --port 80
+minikube ssh # connect to a Node
+k edit service nsvc # to update from Service to NodePort
+curl http://$(minikube ip):30000
+
+# headless service does not even require IP
+# one model to expose Front and Back:
+
+NodePort:30000 -> Front:80 -> FrontPod:80 --> ServiceBack:80 -> BackPod:80
+
+# for DNS Kuberentes uses kube-dns service (added to /etc/resolv.conf of each Pod) and coredns Pod
+k run testpod --image=busybox -- sleep 3600
+k exec testpod -- cat /etc/resolv.conf
+k exec testpod -- nslookup testpod
+
+# by default all Pods in any namespace will be placed in the same networks and can communicate
+# NetworkPolicies can be used to prevent it, for example with Calico network Plugin
+# NetworkPlicy uses: Pods, Namespaces, IP block
+
+

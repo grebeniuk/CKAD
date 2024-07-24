@@ -1,0 +1,22 @@
+Ingress is a load balancer. 
+It's also an API resource inside the cluster, so can access Services.
+There are multiple ingress controlers supported by the community: ngnix, trafficmanager, etc
+
+There is minikube ingress controller we can use. 
+
+minikube addon enable
+k get deploy
+k get svc
+k create ingress -h
+k create ingress nsvc-ingress --rule="/=nginxsvc:80" --rule="/hellow=newdep:8080"
+
+two prefixTypes supported: Exact and Prfix. Prefix more flexible
+
+k create deploy mars --image=nginx
+k create deploy saturn --image=httpd
+
+k expose mars --port=80
+k expose saturn --port=80
+k create ingress planets-ingress --rule="/mars=mars:80" --rule="/staturn=saturn:80"
+
+

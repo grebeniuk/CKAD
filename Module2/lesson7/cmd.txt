@@ -1,0 +1,35 @@
+# Deployments: creates Pods and ReplicaSet
+k create deploy myweb --image=mginx --replicas=3
+# To edit deployment
+k edit deployments.apps redis
+# Zero downtime: old replica deleted and new one is created
+k create deploy nginxup --image=inginx:1.14
+k get all --selector app=nginxup
+# k set: will perform rolling update
+k set image deploy nginxup nginx=nginx:1.17
+# setting and removing labels
+k label deployment l=value
+k label deployment l-
+# if we remove app label, Replicaset controller won't be able to find a pod and will create a new one
+# Replica Set will be 0 after upgrading. This allows to rollback. To rollback we can use:
+k rollout history deployment mynginx 
+k rollout history deployment mynginx --revision=1
+k rollout undo deployment mynginx --to-revision=1
+# stragegy is ussed to configure rollingUpdate. maxSurege and maxUnavailable
+k scale deploy mydepl --replicas=4
+
+# DemonSet: created one Pod on each Node. Like an agent. When new Node is added, new Pod will be added as well
+# Can't be created with cmd, only yaml
+kind: DemonSet
+
+# Autosclale
+k autoscale dployment mydep --cpu-percent=50 --min=1 --max=5
+k get api-resources | less
+k get hpa
+minikube addons enable metrics-server
+
+
+# Lab: start deployment for Nginx. Image 1.9 with 5 replicas. Label type=proxy. No more than 2 Pods to be unavailable at the same time. Make yamls.
+
+
+k create deploy labnginx --image=nginx:1.15 --replicas=5 --dry-run=client -o yaml > lab7.yaml
