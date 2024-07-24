@@ -1,0 +1,48 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mypv
+spec:
+  storageClassName: ""
+  capacity:
+    storage: 5M
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: /tmp/pvol
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: volclaim
+spec:
+  storageClassName: ""
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5M
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: http
+  name: http
+spec:
+  volumes:
+  - name: pvol
+    persistentVolumeClaim:
+      claimName: volclaim
+  containers:
+  - image: httpd
+    name: http
+    resources: {}
+    volumeMounts:
+    - name: pvol
+      mountPath: /var/www/html
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}

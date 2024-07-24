@@ -1,0 +1,27 @@
+# Storages
+Every Pod can have strage attached. Persistant Storage can be attached directly, for development and debuging.
+In Production systems it's recommended to have PVC (Persistanc Volume Claim) which will request a storage.
+Than PVC could be BOUND aither to Persistant Volume created by administrator or could be auto created by Kubernetes "Storage Provisioner", using Storageclass dynamicly. 
+
+# Pod Volume Storage
+pod.spec.volumes
+* emptyDir and hostPath are common for testing
+* to mount: pod.spe.containers.volumeMounts
+
+kubectl explain pod.spec.volumes
+
+# PV Persistant Volume
+Could be local directory or other types
+
+# PVC 
+One PV can be used by single PVC. 
+If not match, storage class will try to create one
+
+Pod "PersistentVolumeclaim - name: ..." --- volumes: name: ..., persisnetVolumeClaim: claimName 
+> Mount containers: volumeMounts: name: ref -> volumes: name > PVC > PV
+
+# get StorageClasses which would create PVs if requested from PVC
+kubectl get storageclass
+
+We can storageClassName: ... as a selector, to make sure that PV and PVC are bound together based on equal storageClassName
+
