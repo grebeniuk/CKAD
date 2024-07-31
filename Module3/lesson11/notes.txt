@@ -1,0 +1,57 @@
+# Setting env variables
+kubectl create deploy mydb --image=mariadb
+kubectl set env deploy mydb MYSQL_ROOT_PASSWOR=passowrd
+
+kubectl run mydb --image=mysql -- env="MYSQL_ROOT_PASSWORD=password"
+kubectl describe deploy mydb -o yaml > mydb.yaml
+
+# Config must be provided outside of Deployments, to decouple code from configuration
+
+# ConfigMaps. Types: Variables, Configuration Files, Command line arguments
+# Env variables
+kubectl create cm --from-env-file=dbvard
+kubectl create vm --from-literal=MYSQL_USER=anna
+kubectl set env -- from=configmap/mycm deploy/myapp
+
+
+
+# ConfigFiles
+kubectl create cm myindex --from=file=/my/file.conf
+spec:
+  volumes:
+  - name: cmvol
+	configMap:
+	  name: myindex
+
+volumeMounts:
+- mountPath: /user/share/nginx/html
+  name:cmvol
+
+kubectl exect mydb -- cat /user/share/nginx/html
+
+# Secrets. Types: docker-registry (to connect to Docker registry), TLS (TLS key), generic (secret from local file, dir or literal value)
+# TLS secretes used for communication between api-server and pods
+kubectl get pods -n kube-system coredns-xxx.ywww -o yaml # look for ServiceAccount
+kubectl get sa -n kube-system coredns - o yamls # look for secrets
+kubectl get secret -n kube-system coredns-token-xxx -o yamls # look at the TLS materials
+
+echo SECRET | base64 -d
+
+# kubeadmin is required to read from kube-system. The secrets are stored in etcd and would require root to access
+kubectl create secret tls my-tls-keys --cert-tls/my.crt --key=tls/my.key
+kubectl create secret generic my-secret-pw --from-liternal-password=verysecret
+kubectl create secret generic my-ssh-key --from-file-ssh-private-key=.ssh/id_rsa
+
+kubectl create secret generic -h | less
+kuebectl create secret generic dbpw --from--literal=ROOT_PASSWORD=password
+kubectl set env deploy mynewdb --from=secret/dbpw --prefix=MYSQL_
+kubectl exect mynewdb... -- env
+
+# Docker Registry
+kubectl create secret docker-registry -h | less
+kubectl create secret docker-registry my-docker-credentials --docker-username=$DOCKER_USERNAME --docker-password=$DOCKER_PASSWORD --docker-email=$DOCKER_EMAIL --docker-server=docker.io
+
+kubectl describe secrets my-docker-credentials
+
+
+
