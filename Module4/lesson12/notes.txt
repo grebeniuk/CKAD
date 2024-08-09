@@ -1,0 +1,41 @@
+k api-resources
+APIVERSION: v1 is core
+Namespace: where can extension be used/visible
+k api-versions
+
+k -v=10 get pods (will print the underlying API request)
+kube-proxy provides a sexure interface for curl
+
+k proxy --port=80001&
+curl https://localhost:8001
+
+# there is new version of Kubernetes released every 3 months
+# old APIs can be deprecated
+
+# to check details about the current version of API
+k explian --recusive
+
+
+# RBAC
+# to check permissions
+k auth can-i get pods --as test@test.mail.com
+
+
+#ServiceAccounts used for auth
+# RBAC to connect a Service Account to a specific Role via Role Bindings
+
+# Secrets are auto-mounted to a Pod
+k get sa
+
+k create serviceaccount mysa
+
+# get current token
+k exec -it mypod -- sh
+TOKEN=$(cat /run/secrets/kubernetes.io/serviceaccount/token)
+
+# we can assign SA to a deployment
+k set serviceaccount deployment nginx-deploymet serviceaccount1
+
+
+
+
