@@ -1,0 +1,58 @@
+# package managers. Helm
+
+helm install -f nginx/values.yaml my-nginx nginx/
+helm list
+helm status mysql
+
+# chartname/values.yaml 
+
+helm show values nginx
+helm templates nginx --debug # to see preview of values
+
+# kustomize is a built in feature to deploy changes
+k create -k ./
+
+# in the file we can have
+resources:
+- deployment.yaml
+- sa.yaml
+namePrefix: test-
+namespace: testing
+commonLabels:
+  environment: testing
+
+# good example is to have different values per environment
+
+# Blue Green can be implemented with Service resource
+# We deploy new version of deployment, than create test SVC to test and than switch one with another
+
+k expose deploy gree-nginx --port-80
+# ; to execute create as soon as possible after deletion
+k delete svc bgnginx; kubectl explose green-nginx --port=80 --name=bgnginx
+
+# Canary - traffic switching
+svc 
+labels:
+  type=canary # used as a selector
+# % is regulated via number of replicas
+k expose old-nginx --name=.. --selector app=canary
+
+# k copy podsName to copy something from a Pod
+
+k scale deploy new-nginx --replicas=3
+k scale deploy old-nginx --replicas=0
+
+# CRD: customer Resource Definitions
+# Operators also use CRDs
+operatorhub.io
+Prometheus
+
+# Operators create resources and based on Controllers. They can monitor change of configuration and upate resources accordingly.
+
+# StatefulSet - creates Pods with the same identity: stable network, persistant storage
+
+
+
+
+
+
