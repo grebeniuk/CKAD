@@ -1,0 +1,47 @@
+# debuging
+k run > api-server > etcd > scheduler > kubelet > run continer 
+
+# steps to debug
+
+k describe
+k logs
+
+# if exit code is 0, describe should help, it was terminated and did not even send logs most likely. 
+# if it's not 0, than logs will be helpful
+
+# Pods
+Pending: created in etcd, but some prereq conditions ot been met
+Completed: Pod completed it's work
+Failed: the Pod has finished and somethng gone wrong
+CrashLoopbackOff: Pod has failed and cluster restarted it. Or it could be that the App in Container copleted the process, end scheduler trying to crate it again, and it's completed again - like quick shell command.
+Unknown: status could not be obtained
+
+
+# Networking and Access
+# check network policies
+kubectl get netpol -A
+
+# Expose
+check the selector of svc, it may be having challanges to find the Pods
+
+# Monitoring Cluster Events
+k get events
+k get events -o wide
+k get events | grep Warning
+
+# Authentification
+RBAC
+k config view
+k auth can-i create pods
+
+# Copy config from the minikube cluster
+scp -i $(minikube ip):/tmp/admin.config ~/.kube/config
+
+# Probes
+liveness/readiness
+pods.spec.container can contain
+
+exec
+httpGet
+tcpSocket
+
