@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: "2024-08-22T16:37:53Z"
+  generation: 1
+  labels:
+    app: nginx-dep
+    type: webshop
+    service: nginx
+  name: nginx-dep
+  namespace: default
+  resourceVersion: "304270"
+  uid: a170a5ac-346c-4e9d-89e2-a04d57f72de0
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 5
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: nginx-dep
+  strategy:
+    rollingUpdate:
+      maxSurge: 8
+      maxUnavailable: 3
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: nginx-dep
+        type: webshop
+    spec:
+      containers:
+      - image: nginx:1.18
+        imagePullPolicy: IfNotPresent
+        name: nginx
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+status: {}
