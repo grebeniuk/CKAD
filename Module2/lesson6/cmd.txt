@@ -30,3 +30,20 @@ kubectl delete jobs.batch runnow
 kubectl delete cronjobs.batch runme
 
 kubectl run pod --image=busybox -n secret --dry-run=client -o yaml -- sleep 3600 > app.yaml
+
+
+k run np-nginx --image=nginx --dry-run=client -o yaml > np-nginx.yaml
+k run np-bbox --image=busybox --dry-run=client -o yaml -- sleep 3600 >> np-nginx.yaml
+vim ./np-nginx.yaml
+k create -f ./np-nginx.yaml
+
+
+#expose canary
+
+k create deployment myweb --image=nginx:1.14 --replicas=3 --dry-run=client -o yaml > myweb_old.yaml
+k expose deployment myweb --port=80 --target-port=80 --type=NodePort
+cp ./myweb_old.yaml ./myweb_new.yaml
+# update name and label
+
+
+#
