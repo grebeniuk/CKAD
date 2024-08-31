@@ -9,11 +9,13 @@ spec:
   containers:
   - image: nginx
     name: livenesstest
+    ports:
+      - containerPort: 80
     resources: {}
-    livenessProbe:
+    readinessProbe:
       httpGet:
-        path: /healthz
-        port: 8080
+        path: https://192/168.49.2:8443/healthz
+        port: 8443
   dnsPolicy: ClusterFirst
   restartPolicy: Always
 status: {}

@@ -4,37 +4,67 @@
 namespace/ckad-ns1 created
 ➜  lesson15 git:(main) ✗ k run pod-a --image=httpd -n ckad-ns1
 pod/pod-a created
-➜  lesson15 git:(main) ✗ k run pod-b --image=nginx -n ckad-ns1
+# we will need to create alpine and add container in yaml for nginx ...
+➜  lesson15 git:(main) ✗ k run pod-b --image=alpine -n ckad-ns1 --dry-run=client -o yaml -- sleep 3600 > ns.yaml
 
 # Using Secrets
+k create secret generic e-my-pass --from-literal=password=secret
 k get secrets e-my-pass
 k describe secrets e-my-pass
 k create deployment secretapp --image=nginx --replicas=1 --dry-run=client -o yaml > secretapp_dep.yaml 
-k exec secretapp-65bfc68bdf-5tj7f -- env | grep MY_PASS
+# we can update the yaml, but easier is to do k set env
+k set env --from-secret/e-my-pass deployment/secretapp
+k exec secretapp-65bfc68bdf-5tj7f -- env | grep password 
 
 
 #Docker with custom images
 docker build . -t test -o type=tar,dest=./greetworld
+# there is also a docker save
+docker build -t greetworld .
+docker save -o greeetworld.tar greetworld
+
 
 # Sidecar
 k exec -n ckad-ns3 pod1 -c nginxcontainer -- ls /usr/share/nginx/html
 k exec -n ckad-ns3 pod1 -c nginxcontainer -- curl http://localhost:80/date.log
 
 # Fixing a Deployment
-TODO
+kubectl api versions
+kubectl explain ..
 
-# Using Probes
+# Using Probes - wrong. We need readiness probe, not liveness
 k run livenesstest --image=nginx --dry-run=client -o yaml > livenesstest.yaml
 k exec -n ckad-ns3 livenesstest -- curl http://localhost:80/healtz
+# there is also no healtz in nginx. We need to check k get pods -all -o wide, to get ip address of the minikube
+# also curl needs to be curl -k
+
+
 
 # Creating a Deployment
 k create deployment nginx-dep --image=nginx:1.18 --replicas=5 -o yaml > nginx-depl-repl.yaml
+k set image deployment/nginx nginx=nginx:1.9.1
 
 # Exposing Applications
 k expose deployment nginx-deployment --type=NodePort --port=32000 --target-port=80 -n ckad-ns6
 curl http://192.168.49.2:32000
 k get svc -n ckad-ns6 -o yaml
 curl http://192.168.49.2:31704
-k create ingress simple --rule="mynginx.info/=nginx-deployment:32000" -n ckad-ns6
+k create ingress simple --rule="mynginx.info/=nginx-deployment:80" -n ckad-ns6
+curl mynginx.info
+
+# To test network policy we can exec wget --spider --timeout=1 nginx
+
+# Quota
+k create quota limitedquota -n limited --hard=cpu=1,memory=2G,pods=5
+k set resources -n limited deployment restrictnginx --limits=momory=256Mi --request=momory=64Mi
+
+# Canary
+k expose myweb --selector type=canary --port=80
+
+# Security
+k explain pod.spec.securityContext
 
 
+# Service Account
+k create sa allaccess
+k run allaccess --image=busybox --dry-run=client -o yaml -- sleep 3600 > task 1516.yaml

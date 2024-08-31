@@ -7,7 +7,7 @@ metadata:
   name: sleepybox
 spec:
   securityContext:
-    supplementalGroups: [2000]
+    fsGroup: 2000 
   containers:
   - args:
     - sleep
